@@ -4,7 +4,7 @@
  *
  *
  */
-var name        = 'lib/hrsoo.formatter';
+var name        = 'hrsoo.formatter';
 var taste       = require('taste');
 var formatter   = taste.target(name);
 

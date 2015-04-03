@@ -4,7 +4,7 @@
  *
  *
  */
-var name    = 'lib/hrsoo.parser';
+var name    = 'hrsoo.parser';
 var taste   = require('taste');
 var parser  = taste.target(name);
 

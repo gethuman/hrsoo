@@ -19,12 +19,14 @@
     "url": "https://github.com/gethuman/hrsoo/issues"
   },
   "homepage": "https://github.com/gethuman/hrsoo",
-  "dependencies": {
-
-  },
+  "dependencies": {},
   "devDependencies": {
     "batter": "0.0.26",
+    "commander": "^2.7.1",
     "gulp": "^3.8.11",
     "taste": "^0.1.56"
+  },
+  "bin": {
+    "jangular": "lib/hrsoo.cli.js"
   }
 }

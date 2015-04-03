@@ -18,7 +18,17 @@ A string that contains the hours of operation for a business can come in many di
 This library is an attempt to normalize any of these typical variations and output either a standard JSON
 data structure that contains all the hours or a specific format.
 
-## Installation
+## Usage - Command Line
+
+From the command line enter:
+
+```
+npm install hrsoo -g
+```
+
+TBD
+
+## Usage - Node
 
 From the command line enter:
 
@@ -26,12 +36,12 @@ From the command line enter:
 npm install hrsoo --save
 ```
 
-## Usage - Command Line
-
-TBD
-
-## Usage - Node
-
 TBD
 
 ## Usage - Browser
+
+From the command line enter:
+
+```
+npm install hrsoo --save
+```
