@@ -21,10 +21,10 @@
   "homepage": "https://github.com/gethuman/hrsoo",
   "dependencies": {},
   "devDependencies": {
-    "batter": "0.0.26",
+    "batter": "0.0.28",
     "commander": "^2.7.1",
     "gulp": "^3.8.11",
-    "taste": "^0.1.56"
+    "taste": "^0.1.57"
   },
   "bin": {
     "hrsoo": "lib/hrsoo.cli.js"
