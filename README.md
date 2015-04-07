@@ -42,4 +42,4 @@ var formatted = hrsoo.format('Monday through Friday 9 a.m. to 5 p.m.');
 
 ## Usage - Browser
 
-TBD
+TBD - This library will soon have a a client side package included.

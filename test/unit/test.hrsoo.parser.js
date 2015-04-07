@@ -245,7 +245,8 @@ describe('UNIT ' + name, function () {
                     '1330': true,
                     '1400': true,
                     '1430': true
-                }
+                },
+                timezone: 'est'
             };
             var actual = parser.getDayTimes(state);
             actual.should.deep.equal(expected);
@@ -254,7 +255,7 @@ describe('UNIT ' + name, function () {
 
     describe('parse()', function () {
         it('should return an empty object if an invalid string', function () {
-            parser.parse('invalid string here', { noLog: true }).should.deep.equal({});
+            parser.parse('invalid string here', { noLog: true }).should.deep.equal({ timezone: 'est' });
         });
 
         it('should parse out string Monday-Wednesday 11:30am-1pm', function () {
@@ -262,7 +263,8 @@ describe('UNIT ' + name, function () {
             var expected = {
                 monday: {  '1130': true, '1200': true, '1230': true  },
                 tuesday: {  '1130': true, '1200': true, '1230': true  },
-                wednesday: {  '1130': true, '1200': true, '1230': true  }
+                wednesday: {  '1130': true, '1200': true, '1230': true  },
+                timezone: 'est'
             };
             var actual = parser.parse(hrsText);
             actual.should.deep.equal(expected);

@@ -29,10 +29,10 @@ describe('UNIT ' + name, function () {
 
     describe('isSkipChar()', function () {
         it('should return true for a period', function () {
-            return utils.isSkipChar('.').should.be.true;
+            return utils.isSkip('.').should.be.true;
         });
         it('should return false for a letter', function () {
-            return utils.isSkipChar('a').should.be.false;
+            return utils.isSkip('a').should.be.false;
         });
     });
 
