@@ -44,8 +44,16 @@ describe('UNIT ' + name, function () {
 
         it('should get a day', function () {
             var state = { text: '8:30 su', index: 5 };
-            var expectedTokens = [{ type: 'day', value: 'sunday' }];
+            var expectedTokens = [{ type: 'days', value: ['sunday'] }];
             var expected = { text: '8:30 su', index: 7, tokens: expectedTokens };
+            var actual = lexer.readString(state);
+            actual.should.deep.equal(expected);
+        });
+
+        it('should get closed token', function () {
+            var state = { text: '8:30 closed', index: 5 };
+            var expectedTokens = [{ type: 'time', value: { isClosed: true }}];
+            var expected = { text: '8:30 closed', index: 11, tokens: expectedTokens };
             var actual = lexer.readString(state);
             actual.should.deep.equal(expected);
         });
@@ -54,7 +62,7 @@ describe('UNIT ' + name, function () {
     describe('readTime()', function () {
         it('should read in a hrs with no minutes', function () {
             var state = { text: 'this 8am', index: 5 };
-            var expectedTokens = [{ type: 'time', hrs: 8, mins: 0 }];
+            var expectedTokens = [{ type: 'time', value: { hrs: 8, mins: 0 }}];
             var expected = { text: 'this 8am', index: 6, tokens: expectedTokens };
             var actual = lexer.readTime(state);
             actual.should.deep.equal(expected);
@@ -62,7 +70,7 @@ describe('UNIT ' + name, function () {
 
         it('should read in a hrs with minutes', function () {
             var state = { text: 'this 08:30 am', index: 5 };
-            var expectedTokens = [{ type: 'time', hrs: 8, mins: 30 }];
+            var expectedTokens = [{ type: 'time', value: { hrs: 8, mins: 30 }}];
             var expected = { text: 'this 08:30 am', index: 10, tokens: expectedTokens };
             var actual = lexer.readTime(state);
             actual.should.deep.equal(expected);
@@ -79,7 +87,7 @@ describe('UNIT ' + name, function () {
 
         it('should convert 24-7', function () {
             var state = { text: '24 hours, 7 days' };
-            var expectedTokens = [{ type: 'timerange', start: 0, end: 2400 }, { type: 'days', value: utils.daysOfWeek }];
+            var expectedTokens = [{ type: 'time', value: { allDay: true }}, { type: 'days', value: utils.daysOfWeek }];
             var expected = { text: ', ', tokens: expectedTokens };
             var actual = lexer.checkCommonHours(state);
             actual.should.deep.equal(expected);
@@ -97,13 +105,13 @@ describe('UNIT ' + name, function () {
         it('should find tokens for Monday-Friday 8:30am-5pm', function () {
             var hoursText = 'Monday-Friday 8:30am-5pm';
             var expected = [
-                { type: 'day', value: 'monday' },
+                { type: 'days', value: ['monday'] },
                 { type: 'operation', value: 'through' },
-                { type: 'day', value: 'friday' },
-                { type: 'time', hrs: 8, mins: 30 },
+                { type: 'days', value: ['friday'] },
+                { type: 'time', value: { hrs: 8, mins: 30 }},
                 { type: 'ampm', value: 'am' },
                 { type: 'operation', value: 'through' },
-                { type: 'time', hrs: 5, mins: 0 },
+                { type: 'time', value: { hrs: 5, mins: 0 }},
                 { type: 'ampm', value: 'pm' }
             ];
             var actual = lexer.getTokens(hoursText);
@@ -113,7 +121,7 @@ describe('UNIT ' + name, function () {
         it('should find tokens for 24 hours, 7 days', function () {
             var hoursText = '24 hours, 7 days';
             var expected = [
-                { type: 'timerange', start: 0, end: 2400 },
+                { type: 'time', value: { allDay: true }},
                 { type: 'days', value: utils.daysOfWeek }
             ];
             var actual = lexer.getTokens(hoursText);
@@ -123,21 +131,21 @@ describe('UNIT ' + name, function () {
         it('should find tokens for Mon-Fri 7am-5pm, Sat-Sun 8:30am-5pm PST', function () {
             var hoursText = 'Mon-Fri 7am-5pm, Sat-Sun 8:30am-5pm PST';
             var expected = [
-                { type: 'day', value: 'monday' },
+                { type: 'days', value: ['monday'] },
                 { type: 'operation', value: 'through' },
-                { type: 'day', value: 'friday' },
-                { type: 'time', hrs: 7, mins: 0 },
+                { type: 'days', value: ['friday'] },
+                { type: 'time', value: { hrs: 7, mins: 0 }},
                 { type: 'ampm', value: 'am' },
                 { type: 'operation', value: 'through' },
-                { type: 'time', hrs: 5, mins: 0 },
+                { type: 'time', value: { hrs: 5, mins: 0 }},
                 { type: 'ampm', value: 'pm' },
-                { type: 'day', value: 'saturday' },
+                { type: 'days', value: ['saturday'] },
                 { type: 'operation', value: 'through' },
-                { type: 'day', value: 'sunday' },
-                { type: 'time', hrs: 8, mins: 30 },
+                { type: 'days', value: ['sunday'] },
+                { type: 'time', value: { hrs: 8, mins: 30 }},
                 { type: 'ampm', value: 'am' },
                 { type: 'operation', value: 'through' },
-                { type: 'time', hrs: 5, mins: 0 },
+                { type: 'time', value: { hrs: 5, mins: 0 }},
                 { type: 'ampm', value: 'pm' },
                 { type: 'timezone', value: 'pst' }
             ];
@@ -145,20 +153,20 @@ describe('UNIT ' + name, function () {
             actual.should.deep.equal(expected);
         });
 
-        it('should find tokens for 7 a.m. to 11 p.m. and Saturday 9 a.m. to 5 p.m. Eastern Time', function () {
-            var hoursText = '7 a.m. to 11 p.m. and Saturday 9 a.m. to 5 p.m. Eastern Time';
+        it('should find tokens for Friday 7 a.m. to 11 p.m. and Saturday 9 a.m. to 5 p.m. Eastern Time', function () {
+            var hoursText = 'Friday 7 a.m. to 11 p.m. and Saturday 9 a.m. to 5 p.m. Eastern Time';
             var expected = [
-                { type: 'time', hrs: 7, mins: 0 },
+                { type: 'days', value: ['friday'] },
+                { type: 'time', value: { hrs: 7, mins: 0 }},
                 { type: 'ampm', value: 'am' },
                 { type: 'operation', value: 'through' },
-                { type: 'time', hrs: 11, mins: 0 },
+                { type: 'time', value: { hrs: 11, mins: 0 }},
                 { type: 'ampm', value: 'pm' },
-                { type: 'operation', value: 'and' },
-                { type: 'day', value: 'saturday' },
-                { type: 'time', hrs: 9, mins: 0 },
+                { type: 'days', value: ['saturday'] },
+                { type: 'time', value: { hrs: 9, mins: 0 }},
                 { type: 'ampm', value: 'am' },
                 { type: 'operation', value: 'through' },
-                { type: 'time', hrs: 5, mins: 0 },
+                { type: 'time', value: { hrs: 5, mins: 0 }},
                 { type: 'ampm', value: 'pm' },
                 { type: 'timezone', value: 'est' }
             ];

@@ -27,6 +27,6 @@
     "taste": "^0.1.56"
   },
   "bin": {
-    "jangular": "lib/hrsoo.cli.js"
+    "hrsoo": "lib/hrsoo.cli.js"
   }
 }

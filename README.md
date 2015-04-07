@@ -3,9 +3,6 @@ hrsoo
 
 This is a little utility to help parse hours of operation strings.
 
-
-**NOTE:** This is a work in progress and not ready yet
-
 ## Overview
 
 A string that contains the hours of operation for a business can come in many different forms. For example:
@@ -24,9 +21,9 @@ From the command line enter:
 
 ```
 npm install hrsoo -g
+hrsoo -i "Monday through Friday 9 a.m. to 5 p.m."
 ```
 
-TBD
 
 ## Usage - Node
 
@@ -36,12 +33,13 @@ From the command line enter:
 npm install hrsoo --save
 ```
 
-TBD
+Then in your Node.js code use the library like this:
+
+```
+var hrsoo = require('hrsoo');
+var formatted = hrsoo.format('Monday through Friday 9 a.m. to 5 p.m.');
+```
 
 ## Usage - Browser
 
-From the command line enter:
-
-```
-npm install hrsoo --save
-```
+TBD
