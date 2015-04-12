@@ -109,5 +109,8 @@ describe('UNIT ' + name, function () {
             var actual = formatter.format(hrsText);
             actual.should.equal(expected);
         });
+
+        //TODO: time by itself means every other day?
+        //TODO: 'and' could mean something in that case
     });
 });
