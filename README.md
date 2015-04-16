@@ -56,3 +56,5 @@ A couple of things I am still working on:
 * Timezone converations - I want to be able to pass in as a param the desired timezone and do a conversion
 * Working with military time - Input strings that contain military time won't work yet
 * Bad data - Sometimes the data is just bad. This library is not magic...but I am looking into that as well.
+* Internationalization - Yeah...haven't gotten there yet. This is US only for now.
+* More format options - This should be pretty easy, so let me know if you have a specific format you want.
