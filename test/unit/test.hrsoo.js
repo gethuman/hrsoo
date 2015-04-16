@@ -13,6 +13,18 @@ var hrsoo   = taste.target(name);
 var fs      = require('fs');
 var path    = require('path');
 
+function getLogHandler(options, i, hours, counters) {
+    options = options || {};
+    options.logHandler = function (msg) {
+        counters.errCount++;
+        console.log('\nerror count ' + counters.errCount);
+        console.log(i + 'orig: ' + hours);
+        console.log(i + 'err:  ' + msg);
+    };
+
+    return options;
+}
+
 /**
  * Main function for testing out all fixtures. We will have different unit
  * tests below for different variations of options.
@@ -23,15 +35,17 @@ function testFixtures(options) {
     var file = fs.readFileSync(fileName, { encoding: 'utf8' });
     var fixtures = file.split('\n');
     var i, fixture, hours, normalized;
+    var counters = { errCount: 0 };
 
-    for (i = 30; i < 40; i++) {
+    for (i = 0; i < fixtures.length; i++) {
         fixture = fixtures[i];
         hours = fixture.replace(/"/g, '').trim();
 
+        normalized = hrsoo.format(hours, getLogHandler(options, i, hours, counters));
 
-        console.log('\n' + i + 'orig: ' + hours);
-        normalized = hrsoo.format(hours, options);
-        console.log(i + 'now:  ' + normalized + '\n');
+        //console.log(i + 'orig: ' + hours);
+        //normalized = hrsoo.format(hours);
+        //console.log(i + 'now:  ' + normalized + '\n');
 
         //TODO: check against something here
     }
@@ -43,8 +57,8 @@ describe('UNIT ' + name, function () {
     describe('format()', function () {
 
         //it('should test specific use case', function () {
-        //    var hours = '8:00am and 8:00pm ET';
-        //    var expected = '8am-8pm EST';
+        //    var hours = '12pm-11pm (Sun) EST';
+        //    var expected = 'Sun noon-11pm EST';
         //    var actual = hrsoo.format(hours);
         //    actual.should.equal(expected);
         //});
