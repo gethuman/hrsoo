@@ -14,6 +14,7 @@ var sourcemaps  = require('gulp-sourcemaps');
 module.exports = function (gulp) {
     var b = browserify({
         entries: './lib/hrsoo.js',
+        standalone: 'hrsoo',
         debug: true
     });
 
