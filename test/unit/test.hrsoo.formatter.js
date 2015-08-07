@@ -15,15 +15,15 @@ describe('UNIT ' + name, function () {
         });
 
         it('should convert 0 to 12am', function () {
-            formatter.getTimeString(0).should.equal('12am');
+            formatter.getTimeString(0).should.equal('midnight');
         });
 
         it('should convert 2400 to 12am', function () {
-            formatter.getTimeString(2400).should.equal('12am');
+            formatter.getTimeString(2400).should.equal('midnight');
         });
 
         it('should convert 1200 to 12pm', function () {
-            formatter.getTimeString(1200).should.equal('12pm');
+            formatter.getTimeString(1200).should.equal('noon');
         });
 
         it('should convert 1530 to 3:30pm', function () {
@@ -64,7 +64,7 @@ describe('UNIT ' + name, function () {
                 '500': true, '530': true, '600': true, '630': true,
                 '1500': true, '1530': true, '1600': true
             };
-            var expected = '2am-4am, 12pm-1:30pm';
+            var expected = '2am-4am, noon-1:30pm';
             var actual = formatter.formatTime(timeProfile, 'est', 'pst');
             actual.should.equal(expected);
         });

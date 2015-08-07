@@ -234,6 +234,7 @@ describe('UNIT ' + name, function () {
                 ]
             };
             var expected = {
+                isAllWeekSameTime: false,
                 monday: {
                     '1300': true,
                     '1330': true,
@@ -255,12 +256,16 @@ describe('UNIT ' + name, function () {
 
     describe('parse()', function () {
         it('should return an empty object if an invalid string', function () {
-            parser.parse('invalid string here', { noLog: true }).should.deep.equal({ timezone: 'est' });
+            parser.parse('invalid string here', { noLog: true }).should.deep.equal({
+                isAllWeekSameTime: false,
+                timezone: 'est'
+            });
         });
 
         it('should parse out string Monday-Wednesday 11:30am-1pm', function () {
             var hrsText = 'Monday-Wednesday 11:30am-1pm';
             var expected = {
+                isAllWeekSameTime: false,
                 monday: {  '1130': true, '1200': true, '1230': true  },
                 tuesday: {  '1130': true, '1200': true, '1230': true  },
                 wednesday: {  '1130': true, '1200': true, '1230': true  },
