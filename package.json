@@ -21,7 +21,7 @@
   "homepage": "https://github.com/gethuman/hrsoo",
   "dependencies": {},
   "devDependencies": {
-    "batter": "0.1.10",
+    "batter": "0.1.11",
     "browserify": "^11.0.1",
     "commander": "^2.8.1",
     "gulp": "^3.9.0",
