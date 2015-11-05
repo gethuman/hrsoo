@@ -80,7 +80,7 @@ describe('UNIT ' + name, function () {
                 monday: { '500': true, '530': true, '600': true, '630': true },
                 tuesday: { '500': true, '530': true, '600': true, '630': true },
                 wednesday: { '500': true, '530': true, '600': true, '630': true },
-                saturday: { '1500': true, '1530': true, '1600': true, '1630': true },
+                saturday: { '1500': true, '1530': true, '1600': true, '1630': true }
             };
             var expected = 'Mon-Wed 5am-7am, Sat 3pm-5pm EST';
             var actual = formatter.stringify(hoursObj);

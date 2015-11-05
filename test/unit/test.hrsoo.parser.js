@@ -72,7 +72,7 @@ describe('UNIT ' + name, function () {
                     { type: 'operation', value: 'through' }
                 ]
             };
-            var expected = { noLog: true, tokens: [{ type: 'time', value: { hrs: 8, mins: 30 } }] };
+            var expected = { errorThrough: 'Through operation without prev or next', noLog: true, tokens: [{ type: 'time', value: { hrs: 8, mins: 30 } }] };
             var actual = parser.doOperations(state, 'through', parser.throughOp);
             actual.should.deep.equal(expected);
         });
@@ -85,7 +85,7 @@ describe('UNIT ' + name, function () {
                     { type: 'time', value: { hrs: 8, mins: 30 }}
                 ]
             };
-            var expected = { noLog: true, tokens: [{ type: 'time', value: { hrs: 8, mins: 30 } }] };
+            var expected = { errorThrough: 'Through operation without prev or next', noLog: true, tokens: [{ type: 'time', value: { hrs: 8, mins: 30 } }] };
             var actual = parser.doOperations(state, 'through', parser.throughOp);
             actual.should.deep.equal(expected);
         });
@@ -246,6 +246,68 @@ describe('UNIT ' + name, function () {
                     '1330': true,
                     '1400': true,
                     '1430': true
+                },
+                timezone: 'est'
+            };
+            var actual = parser.getDayTimes(state);
+            actual.should.deep.equal(expected);
+        });
+        it('should get from day - time combos - but not upwards of 2400', function () {
+            var state = {
+                tokens: [
+                    { type: 'days', value: ['monday', 'wednesday']},
+                    { type: 'time', value: { ranges: [{ start: 1300, end: 3500 }]}}
+                ]
+            };
+            var expected = {
+                isAllWeekSameTime: false,
+                monday: {
+                    '1300': true,
+                    '1330': true,
+                    '1400': true,
+                    '1430': true,
+                    '1500': true,
+                    '1530': true,
+                    '1600': true,
+                    '1630': true,
+                    '1700': true,
+                    '1730': true,
+                    '1800': true,
+                    '1830': true,
+                    '1900': true,
+                    '1930': true,
+                    '2000': true,
+                    '2030': true,
+                    '2100': true,
+                    '2130': true,
+                    '2200': true,
+                    '2230': true,
+                    '2300': true,
+                    '2330': true
+                },
+                wednesday: {
+                    '1300': true,
+                    '1330': true,
+                    '1400': true,
+                    '1430': true,
+                    '1500': true,
+                    '1530': true,
+                    '1600': true,
+                    '1630': true,
+                    '1700': true,
+                    '1730': true,
+                    '1800': true,
+                    '1830': true,
+                    '1900': true,
+                    '1930': true,
+                    '2000': true,
+                    '2030': true,
+                    '2100': true,
+                    '2130': true,
+                    '2200': true,
+                    '2230': true,
+                    '2300': true,
+                    '2330': true
                 },
                 timezone: 'est'
             };
