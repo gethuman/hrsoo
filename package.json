@@ -1,6 +1,6 @@
 {
   "name": "hrsoo",
-  "version": "0.0.45",
+  "version": "0.0.46",
   "description": "Library to parse out hours of operation",
   "main": "lib/hrsoo.js",
   "repository": {
