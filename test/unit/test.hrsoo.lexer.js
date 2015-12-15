@@ -92,6 +92,13 @@ describe('UNIT ' + name, function () {
             var actual = lexer.checkCommonHours(state);
             actual.should.deep.equal(expected);
         });
+
+        it('should convert noon', function () {
+            var state = { text: '8am to noon' };
+            var expected = { text: '8am to 12pm', tokens: [] };
+            var actual = lexer.checkCommonHours(state);
+            actual.should.deep.equal(expected);
+        });
     });
 
     describe('getTokens()', function () {
@@ -123,6 +130,20 @@ describe('UNIT ' + name, function () {
             var expected = [
                 { type: 'time', value: { allDay: true }},
                 { type: 'days', value: utils.daysOfWeek }
+            ];
+            var actual = lexer.getTokens(hoursText);
+            actual.should.deep.equal(expected);
+        });
+
+        it('should find tokens for Mon 11am-12pm', function () {
+            var hoursText = 'Mon 11am-12pm';
+            var expected = [
+                { type: 'days', value: ['monday'] },
+                { type: 'time', value: { hrs: 11, mins: 0 }},
+                { type: 'ampm', value: 'am' },
+                { type: 'operation', value: 'through' },
+                { type: 'time', value: { hrs: 12, mins: 0 }},
+                { type: 'ampm', value: 'pm' }
             ];
             var actual = lexer.getTokens(hoursText);
             actual.should.deep.equal(expected);
