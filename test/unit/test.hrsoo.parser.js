@@ -337,11 +337,13 @@ describe('UNIT ' + name, function () {
             actual.should.deep.equal(expected);
         });
 
-        it('should parse out string 24 hours, 7 days', function () {
-            var hrsText = '24 hours, 7 days';
-            var expected = { everyDayAllTime: true };
-            var actual = parser.parse(hrsText);
-            actual.should.deep.equal(expected);
+        var twentyFourHourVariants = ['24 hours, 7 days', '24/7', '24 / 7', '24-7'];
+        twentyFourHourVariants.forEach(function (variant) {
+            it('should parse out string ' + variant, function () {
+                var expected = { everyDayAllTime: true };
+                var actual = parser.parse(variant);
+                actual.should.deep.equal(expected);
+            });
         });
     });
 });
