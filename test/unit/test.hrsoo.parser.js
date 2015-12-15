@@ -150,6 +150,26 @@ describe('UNIT ' + name, function () {
             actual.should.deep.equal(expected);
         });
 
+        it('should get through times bridging am/pm', function () {
+            var state = {
+                tokens: [
+                    { type: 'time', value: { hrs: 11, mins: 30 }, ampm: 'am' },
+                    { type: 'operation', value: 'through' },
+                    { type: 'time', value: { hrs: 12, mins: 00 }, ampm: 'pm' }
+                ]
+            };
+            var expected = {
+                tokens: [
+                    { type: 'time', value: { ranges: [{
+                        start: 1130,
+                        end: 1200
+                    }]}}
+                ]
+            };
+            var actual = parser.doOperations(state, 'through', parser.throughOp);
+            actual.should.deep.equal(expected);
+        });
+
         it('should get through days', function () {
             var state = {
                 tokens: [
@@ -344,6 +364,28 @@ describe('UNIT ' + name, function () {
                 var actual = parser.parse(variant);
                 actual.should.deep.equal(expected);
             });
+        });
+
+        it('should correctly parse string with 12pm', function () {
+            var hrsText = 'Tue 11:30am to 12pm';
+            var expected = {
+                isAllWeekSameTime: false,
+                tuesday: {  '1130': true },
+                timezone: 'est'
+            };
+            var actual = parser.parse(hrsText);
+            actual.should.deep.equal(expected);
+        });
+
+        it('should parse string with noon', function () {
+            var hrsText = 'Mon 11am to noon';
+            var expected = {
+                isAllWeekSameTime: false,
+                monday: {  '1100': true, '1130': true },
+                timezone: 'est'
+            };
+            var actual = parser.parse(hrsText);
+            actual.should.deep.equal(expected);
         });
     });
 });
