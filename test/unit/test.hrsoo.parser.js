@@ -397,13 +397,67 @@ describe('UNIT ' + name, function () {
             actual.should.deep.equal(expected);
         });
 
-        var twentyFourHourVariants = ['24 hours, 7 days', '24/7', '24 / 7', '24-7'];
+        it('assumes every day if no days provided', function () {
+            var hrsText = '9am-10am';
+            var expected = {
+                isAllWeekSameTime: true,
+                monday: {  '900': true, '930': true  },
+                tuesday: {  '900': true, '930': true  },
+                wednesday: {  '900': true, '930': true  },
+                thursday: {  '900': true, '930': true  },
+                friday: {  '900': true, '930': true  },
+                saturday: {  '900': true, '930': true  },
+                sunday: {  '900': true, '930': true  },
+                timezone: 'est'
+            };
+            var actual = parser.parse(hrsText);
+            actual.should.deep.equal(expected);
+        });
+
+        var twentyFourHourVariants = ['24 hours, 7 days', '24/7', '24 / 7', '24-7', 'Daily 24 hours', 'everyday'];
         twentyFourHourVariants.forEach(function (variant) {
             it('should parse out string ' + variant, function () {
                 var expected = { everyDayAllTime: true };
                 var actual = parser.parse(variant);
                 actual.should.deep.equal(expected);
             });
+        });
+
+        var everydayVariants = ['9am-10am everyday', 'Everyday 9am-10am', '9am to 10am every day', 'daily 9-10am'];
+        everydayVariants.forEach(function (variant) {
+            it('should correctly parse string ' + variant, function () {
+                var expected = {
+                    isAllWeekSameTime: true,
+                    monday: {  '900': true, '930': true  },
+                    tuesday: {  '900': true, '930': true  },
+                    wednesday: {  '900': true, '930': true  },
+                    thursday: {  '900': true, '930': true  },
+                    friday: {  '900': true, '930': true  },
+                    saturday: {  '900': true, '930': true  },
+                    sunday: {  '900': true, '930': true  },
+                    timezone: 'est'
+                };
+                var actual = parser.parse(variant);
+                actual.should.deep.equal(expected);
+            });
+        });
+
+        var allDay = {
+            'allDay': true,
+            'low': 0,
+            'high': 2359
+        };
+
+        it('should correctly parse 24 hours with days', function () {
+            var hrsText = 'Monday - Tuesday: 24 hours';
+            var expected = {
+                isAllWeekSameTime: false,
+                monday: allDay,
+                tuesday: allDay,
+                timezone: 'est'
+            };
+            var actual = parser.parse(hrsText);
+            actual.should.deep.equal(expected);
         });
 
         it('should correctly parse string with 12pm', function () {
