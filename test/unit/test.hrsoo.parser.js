@@ -7,6 +7,7 @@
 var name    = 'hrsoo.parser';
 var taste   = require('taste');
 var parser  = taste.target(name);
+var utils   = taste.target('hrsoo.utils');
 
 describe('UNIT ' + name, function () {
     describe('parseTimezone()', function () {
@@ -226,6 +227,33 @@ describe('UNIT ' + name, function () {
             var actual = parser.doOperations(state, 'through', parser.throughOp);
             actual.should.deep.equal(expected);
         });
+
+        var fullWeekVariants = [
+            ['monday', 'sunday'],
+            ['tuesday', 'monday'],
+            ['wednesday', 'tuesday'],
+            ['thursday', 'wednesday'],
+            ['friday', 'thursday'],
+            ['saturday', 'friday'],
+            ['sunday', 'saturday']
+        ];
+        fullWeekVariants.forEach(function (variant) {
+            it('should get through 7 days span: ' + variant.join(' - '), function () {
+                var state = {
+                    tokens: [
+                        { type: 'days', value: [variant[0]] },
+                        { type: 'operation', value: 'through' },
+                        { type: 'days', value: [variant[1]] }
+                    ]
+                };
+                var actual = parser.doOperations(state, 'through', parser.throughOp);
+                var tokenValues = actual.tokens[0].value;
+                tokenValues.should.have.length(7);
+                utils.daysOfWeek.forEach(function (dayOfWeek) {
+                    tokenValues.indexOf(dayOfWeek).should.be.above(-1);
+                });
+            });
+        });
     });
 
     describe('compressDayTimes()', function () {
@@ -414,7 +442,7 @@ describe('UNIT ' + name, function () {
             actual.should.deep.equal(expected);
         });
 
-        var twentyFourHourVariants = ['24 hours, 7 days', '24/7', '24 / 7', '24-7', 'Daily 24 hours', 'everyday'];
+        var twentyFourHourVariants = ['24 hours, 7 days', '24/7', '24 / 7', '24-7', 'Daily 24 hours', 'everyday', 'Sun-Sat 24 Hours'];
         twentyFourHourVariants.forEach(function (variant) {
             it('should parse out string ' + variant, function () {
                 var expected = { everyDayAllTime: true };
