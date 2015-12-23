@@ -110,6 +110,46 @@ describe('UNIT ' + name, function () {
             actual.should.deep.equal(expected);
         });
 
+        it('should get through equal times with no am or pm flag', function () {
+            var state = {
+                tokens: [
+                    { type: 'time', value: { hrs: 9, mins: 0 }},
+                    { type: 'operation', value: 'through' },
+                    { type: 'time', value: { hrs: 9, mins: 0 }}
+                ]
+            };
+            var expected = {
+                tokens: [
+                    { type: 'time', value: { ranges: [{
+                        start: 900,
+                        end: 2100
+                    }]}}
+                ]
+            };
+            var actual = parser.doOperations(state, 'through', parser.throughOp);
+            actual.should.deep.equal(expected);
+        });
+
+        it('should get through noon to midnight', function () {
+            var state = {
+                tokens: [
+                    { type: 'time', value: { hrs: 12, mins: 0 }},
+                    { type: 'operation', value: 'through' },
+                    { type: 'time', value: { hrs: 12, mins: 0 }, ampm: 'am' }
+                ]
+            };
+            var expected = {
+                tokens: [
+                    { type: 'time', value: { ranges: [{
+                        start: 1200,
+                        end: 2400
+                    }]}}
+                ]
+            };
+            var actual = parser.doOperations(state, 'through', parser.throughOp);
+            actual.should.deep.equal(expected);
+        });
+
         it('should get through times with am flag', function () {
             var state = {
                 tokens: [
@@ -130,7 +170,7 @@ describe('UNIT ' + name, function () {
             actual.should.deep.equal(expected);
         });
 
-        it('should get through times with am flag', function () {
+        it('should get through times with pm flag', function () {
             var state = {
                 tokens: [
                     { type: 'time', value: { hrs: 4, mins: 30 }, ampm: 'am' },
@@ -382,6 +422,17 @@ describe('UNIT ' + name, function () {
             var expected = {
                 isAllWeekSameTime: false,
                 monday: {  '1100': true, '1130': true },
+                timezone: 'est'
+            };
+            var actual = parser.parse(hrsText);
+            actual.should.deep.equal(expected);
+        });
+
+        it('should intelligently assign ampm', function () {
+            var hrsText = 'Mon 9 to 10';
+            var expected = {
+                isAllWeekSameTime: false,
+                monday: parser.getTimeProfile([{ start: 900, end: 2200 }]),
                 timezone: 'est'
             };
             var actual = parser.parse(hrsText);
