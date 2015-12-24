@@ -7,6 +7,7 @@
 var name    = 'hrsoo.parser';
 var taste   = require('taste');
 var parser  = taste.target(name);
+var utils   = taste.target('hrsoo.utils');
 
 describe('UNIT ' + name, function () {
     describe('parseTimezone()', function () {
@@ -110,6 +111,46 @@ describe('UNIT ' + name, function () {
             actual.should.deep.equal(expected);
         });
 
+        it('should get through equal times with no am or pm flag', function () {
+            var state = {
+                tokens: [
+                    { type: 'time', value: { hrs: 9, mins: 0 }},
+                    { type: 'operation', value: 'through' },
+                    { type: 'time', value: { hrs: 9, mins: 0 }}
+                ]
+            };
+            var expected = {
+                tokens: [
+                    { type: 'time', value: { ranges: [{
+                        start: 900,
+                        end: 2100
+                    }]}}
+                ]
+            };
+            var actual = parser.doOperations(state, 'through', parser.throughOp);
+            actual.should.deep.equal(expected);
+        });
+
+        it('should get through noon to midnight', function () {
+            var state = {
+                tokens: [
+                    { type: 'time', value: { hrs: 12, mins: 0 }},
+                    { type: 'operation', value: 'through' },
+                    { type: 'time', value: { hrs: 12, mins: 0 }, ampm: 'am' }
+                ]
+            };
+            var expected = {
+                tokens: [
+                    { type: 'time', value: { ranges: [{
+                        start: 1200,
+                        end: 2400
+                    }]}}
+                ]
+            };
+            var actual = parser.doOperations(state, 'through', parser.throughOp);
+            actual.should.deep.equal(expected);
+        });
+
         it('should get through times with am flag', function () {
             var state = {
                 tokens: [
@@ -130,7 +171,7 @@ describe('UNIT ' + name, function () {
             actual.should.deep.equal(expected);
         });
 
-        it('should get through times with am flag', function () {
+        it('should get through times with pm flag', function () {
             var state = {
                 tokens: [
                     { type: 'time', value: { hrs: 4, mins: 30 }, ampm: 'am' },
@@ -185,6 +226,33 @@ describe('UNIT ' + name, function () {
             };
             var actual = parser.doOperations(state, 'through', parser.throughOp);
             actual.should.deep.equal(expected);
+        });
+
+        var fullWeekVariants = [
+            ['monday', 'sunday'],
+            ['tuesday', 'monday'],
+            ['wednesday', 'tuesday'],
+            ['thursday', 'wednesday'],
+            ['friday', 'thursday'],
+            ['saturday', 'friday'],
+            ['sunday', 'saturday']
+        ];
+        fullWeekVariants.forEach(function (variant) {
+            it('should get through 7 days span: ' + variant.join(' - '), function () {
+                var state = {
+                    tokens: [
+                        { type: 'days', value: [variant[0]] },
+                        { type: 'operation', value: 'through' },
+                        { type: 'days', value: [variant[1]] }
+                    ]
+                };
+                var actual = parser.doOperations(state, 'through', parser.throughOp);
+                var tokenValues = actual.tokens[0].value;
+                tokenValues.should.have.length(7);
+                utils.daysOfWeek.forEach(function (dayOfWeek) {
+                    tokenValues.indexOf(dayOfWeek).should.be.above(-1);
+                });
+            });
         });
     });
 
@@ -357,13 +425,67 @@ describe('UNIT ' + name, function () {
             actual.should.deep.equal(expected);
         });
 
-        var twentyFourHourVariants = ['24 hours, 7 days', '24/7', '24 / 7', '24-7'];
+        it('assumes every day if no days provided', function () {
+            var hrsText = '9am-10am';
+            var expected = {
+                isAllWeekSameTime: true,
+                monday: {  '900': true, '930': true  },
+                tuesday: {  '900': true, '930': true  },
+                wednesday: {  '900': true, '930': true  },
+                thursday: {  '900': true, '930': true  },
+                friday: {  '900': true, '930': true  },
+                saturday: {  '900': true, '930': true  },
+                sunday: {  '900': true, '930': true  },
+                timezone: 'est'
+            };
+            var actual = parser.parse(hrsText);
+            actual.should.deep.equal(expected);
+        });
+
+        var twentyFourHourVariants = ['24 hours, 7 days', '24/7', '24 / 7', '24-7', 'Daily 24 hours', 'everyday', 'Sun-Sat 24 Hours'];
         twentyFourHourVariants.forEach(function (variant) {
             it('should parse out string ' + variant, function () {
                 var expected = { everyDayAllTime: true };
                 var actual = parser.parse(variant);
                 actual.should.deep.equal(expected);
             });
+        });
+
+        var everydayVariants = ['9am-10am everyday', 'Everyday 9am-10am', '9am to 10am every day', 'daily 9-10am'];
+        everydayVariants.forEach(function (variant) {
+            it('should correctly parse string ' + variant, function () {
+                var expected = {
+                    isAllWeekSameTime: true,
+                    monday: {  '900': true, '930': true  },
+                    tuesday: {  '900': true, '930': true  },
+                    wednesday: {  '900': true, '930': true  },
+                    thursday: {  '900': true, '930': true  },
+                    friday: {  '900': true, '930': true  },
+                    saturday: {  '900': true, '930': true  },
+                    sunday: {  '900': true, '930': true  },
+                    timezone: 'est'
+                };
+                var actual = parser.parse(variant);
+                actual.should.deep.equal(expected);
+            });
+        });
+
+        var allDay = {
+            'allDay': true,
+            'low': 0,
+            'high': 2359
+        };
+
+        it('should correctly parse 24 hours with days', function () {
+            var hrsText = 'Monday - Tuesday: 24 hours';
+            var expected = {
+                isAllWeekSameTime: false,
+                monday: allDay,
+                tuesday: allDay,
+                timezone: 'est'
+            };
+            var actual = parser.parse(hrsText);
+            actual.should.deep.equal(expected);
         });
 
         it('should correctly parse string with 12pm', function () {
@@ -382,6 +504,17 @@ describe('UNIT ' + name, function () {
             var expected = {
                 isAllWeekSameTime: false,
                 monday: {  '1100': true, '1130': true },
+                timezone: 'est'
+            };
+            var actual = parser.parse(hrsText);
+            actual.should.deep.equal(expected);
+        });
+
+        it('should intelligently assign ampm', function () {
+            var hrsText = 'Mon 9 to 10';
+            var expected = {
+                isAllWeekSameTime: false,
+                monday: parser.getTimeProfile([{ start: 900, end: 2200 }]),
                 timezone: 'est'
             };
             var actual = parser.parse(hrsText);
