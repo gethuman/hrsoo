@@ -13,10 +13,13 @@ var hrsoo   = taste.target(name);
 var fs      = require('fs');
 var path    = require('path');
 
+/* eslint max-params:0 */
 function getLogHandler(options, i, hours, counters) {
     options = options || {};
     options.logHandler = function (msg) {
         counters.errCount++;
+
+        /* eslint no-console:0 */
         console.log('\nerror count ' + counters.errCount);
         console.log(i + 'orig: ' + hours);
         console.log(i + 'err:  ' + msg);
@@ -31,17 +34,18 @@ function getLogHandler(options, i, hours, counters) {
  * @param options
  */
 function testFixtures(options) {
-    var fileName = path.normalize(__dirname + '/../fixtures/hours.csv');
+    var fileName = path.normalize(path.join(__dirname, '../fixtures/hours.csv'));
     var file = fs.readFileSync(fileName, { encoding: 'utf8' });
     var fixtures = file.split('\n');
-    var i, fixture, hours, normalized;
+    var i, fixture, hours;
     var counters = { errCount: 0 };
 
     for (i = 0; i < fixtures.length; i++) {
         fixture = fixtures[i];
         hours = fixture.replace(/"/g, '').trim();
 
-        normalized = hrsoo.format(hours, getLogHandler(options, i, hours, counters));
+        hrsoo.format(hours, getLogHandler(options, i, hours, counters));
+        //normalized = hrsoo.format(hours, getLogHandler(options, i, hours, counters));
 
         //console.log(i + 'orig: ' + hours);
         //normalized = hrsoo.format(hours);

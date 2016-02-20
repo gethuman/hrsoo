@@ -155,7 +155,7 @@ describe('UNIT ' + name, function () {
                 tokens: [
                     { type: 'time', value: { hrs: 11, mins: 30 }, ampm: 'am' },
                     { type: 'operation', value: 'through' },
-                    { type: 'time', value: { hrs: 12, mins: 00 }, ampm: 'pm' }
+                    { type: 'time', value: { hrs: 12, mins: 0 }, ampm: 'pm' }
                 ]
             };
             var expected = {
