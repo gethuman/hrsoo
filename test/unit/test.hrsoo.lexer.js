@@ -93,6 +93,14 @@ describe('UNIT ' + name, function () {
             actual.should.deep.equal(expected);
         });
 
+        it('should convert 24 hours', function () {
+            var state = { text: '24 hours' };
+            var expectedTokens = [{ type: 'time', value: { allDay: true }}, { type: 'days', value: utils.daysOfWeek }];
+            var expected = { text: '', tokens: expectedTokens };
+            var actual = lexer.checkCommonHours(state);
+            actual.should.deep.equal(expected);
+        });
+
         it('should convert noon', function () {
             var state = { text: '8am to noon' };
             var expected = { text: '8am to 12pm', tokens: [] };
