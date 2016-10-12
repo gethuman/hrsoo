@@ -22,16 +22,13 @@
   "homepage": "https://github.com/gethuman/hrsoo",
   "dependencies": {},
   "devDependencies": {
-    "batter": "0.1.47",
-    "browserify": "13.1.0",
+    "batter": "^0.1.49",
     "commander": "2.9.0",
     "gulp": "3.9.1",
-    "gulp-sourcemaps": "1.6.0",
-    "gulp-uglify": "2.0.0",
+    "gulp-sourcemaps": "^2.0.1",
+    "gulp-uglify": "^2.0.0",
     "gulp-util": "3.0.7",
-    "taste": "0.2.38",
-    "vinyl-buffer": "1.0.0",
-    "vinyl-source-stream": "1.1.0"
+    "taste": "^0.2.40"
   },
   "bin": {
     "hrsoo": "lib/hrsoo.cli.js"
